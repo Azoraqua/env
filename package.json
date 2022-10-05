@@ -2,6 +2,7 @@
   "name": "@azoraqua/env",
   "version": "1.0.0",
   "main": "./bin/cli.js",
+  "private": false,
   "bin": {
     "qenv": "./bin/cli.js"
   },
