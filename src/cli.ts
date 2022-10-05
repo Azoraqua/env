@@ -64,12 +64,6 @@ function init(args = process.argv.slice(2)): number {
         }
     }
 
-    for (let key in process.env) {
-       if (key.startsWith('X_')) {
-           console.log(key, '=', process.env[key]);
-       }
-    }
-
     return 0;
 }
 
