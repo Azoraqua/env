@@ -1,18 +1,24 @@
 {
   "name": "@azoraqua/env",
   "version": "1.1.0",
-  "main": "./bin/cli.js",
-  "private": false,
+  "main": "./bin/qenv.js",
   "bin": {
-    "qenv": "./bin/cli.js"
+    "qenv": "./bin/qenv.js"
   },
   "scripts": {
-    "build": "cross-env rm -rf bin/* && esbuild src/cli.ts --bundle --minify --platform=node --target=node18.8 --outfile=bin/cli.js"
+    "build:cli": "cross-env rm -rf bin/* && esbuild src/cli.ts --bundle --minify --platform=node --target=node18.8 --outfile=bin/qenv.js",
+    "build:lib": "cross-env rm -rf lib/* && esbuild src/lib.ts --bundle --minify --platform=node --target=node18.8 --outfile=lib/qenv.js",
+    "build": "pnpm run build:cli && pnpm run build:lib",
+    "prepublish": "pnpm run build"
   },
   "devDependencies": {
     "@types/node": "^18.8.2",
+    "@types/yargs": "^17.0.13",
     "cross-env": "^7.0.3",
     "esbuild": "^0.15.10",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "yargs": "^17.6.0"
   }
 }

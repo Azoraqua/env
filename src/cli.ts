@@ -1,70 +1,38 @@
-#!/usr/bin/env node
+import {EnvironmentType, getCurrentEnvironment, setCurrentEnvironment} from "./lib";
 
-// Imports
-const fs = require('fs');
-const path = require('path');
+const { findEnvironmentFiles } = require('./lib');
+const yargs = require('yargs');
+const { hideBin } = require('yargs/helpers');
 
-// Constants
-const CACHE_FOLDER = ".qenvcache";
+function main() {
+    setCurrentEnvironment('PRODUCTION');
 
-type EnvFileType =
-    '.env' |
-    '.env.local' |
-    '.env.prod' |
-    '.env.production' |
-    '.env.dev' |
-    '.env.development';
-const ENV_FILES: EnvFileType[] = ['.env', '.env.local', '.env.production', '.env.development'];
-
-function loadEnv(file: EnvFileType) {
-    if (!fs.existsSync(file)) {
-        return;
-    }
-
-    for (const line of fs.readFileSync(file).toString().split(/\r?\n/)) {
-        const parts = line.split('=');
-        const key = parts[0];
-        const value = parts[1];
-
-        process.env[key] = value;
-    }
+    yargs(hideBin(process.argv))
+        // .command('switch', 'switch between environments', () => {
+        //
+        // })
+        // .command('current', 'get/set the current environment', () => {}, (args: string[]) => {
+            // if(!Object.values(args)[0]) {
+            //     console.info(`The current environment is: ${getCurrentEnvironment()}`);
+            // } else {
+            //     setCurrentEnvironment(args[0][1] as EnvironmentType);
+            //     console.log(`Changed the current environment to: ${args[0][1]}`)
+            // }
+        // })
+        .command('list', 'list available environments', () => {
+            console.log('Environment files:');
+            findEnvironmentFiles().forEach((file: any, index: number) => {
+                console.log(`${index + 1}) ${file}`);
+            })
+        })
+        // .command('set', 'set variable in current environment', () => {}, (args: string[]) => {
+        //
+        // })
+        // .command('get', 'get variable from current environment', () => {}, (args: string[]) => {
+        //
+        // })
+        .demandCommand(1)
+        .parse();
 }
 
-function init(args = process.argv.slice(2)): number {
-    if (args.length === 0) {
-        // TODO: Send help.
-        return -1;
-    }
-
-    if (args[0]) {
-        if (!ENV_FILES.some(f => f === args[0])) {
-            console.warn('It\'s discouraged to use environment files with this name. However we\'ll continue the process.');
-        }
-
-        loadEnv(args[0] as EnvFileType);
-    } else {
-        // Priority:
-        // .envq.production
-        // .envq.development
-        // .envq.local
-        // .envq
-
-        let file;
-
-        if (
-            fs.existsSync(file = '.env.production') ||
-            fs.existsSync(file = '.env.development') ||
-            fs.existsSync(file = '.env.local') ||
-            fs.existsSync(file = '.env') &&
-            file
-        ) {
-            loadEnv(file as EnvFileType);
-        } else {
-            console.error('No environment files found.');
-        }
-    }
-
-    return 0;
-}
-
-process.exit(init());
+main();
