@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
 // Imports
-import * as process from "process";
-
 const fs = require('fs');
 const path = require('path');
 
